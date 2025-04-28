@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Banners {
+  maBanner  Int       @id
+  maPhim    Int?
+  hinhAnh   String?   @db.VarChar(255)
+  deletedBy Int       @default(0)
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime? @db.Timestamp(0)
+  createdAt DateTime  @default(now()) @db.Timestamp(0)
+  updatedAt DateTime  @default(now()) @db.Timestamp(0)
+  Movies    Movies?   @relation(fields: [maPhim], references: [maPhim], onDelete: NoAction, onUpdate: NoAction, map: "Banners_ibfk_1")
+
+  @@index([maPhim], map: "maPhim")
+}
+
+model Bookings {
+  bookingId   Int        @id @default(autoincrement())
+  taiKhoan    String?    @db.VarChar(100)
+  maLichChieu Int?
+  maGhe       Int?
+  deletedBy   Int        @default(0)
+  isDeleted   Boolean    @default(false)
+  deletedAt   DateTime?  @db.Timestamp(0)
+  createdAt   DateTime   @default(now()) @db.Timestamp(0)
+  updatedAt   DateTime   @default(now()) @db.Timestamp(0)
+  Users       Users?     @relation(fields: [taiKhoan], references: [taiKhoan], onDelete: NoAction, onUpdate: NoAction, map: "Bookings_ibfk_1")
+  Showtimes   Showtimes? @relation(fields: [maLichChieu], references: [maLichChieu], onDelete: NoAction, onUpdate: NoAction, map: "Bookings_ibfk_2")
+  Chairs      Chairs?    @relation(fields: [maGhe], references: [maGhe], onDelete: NoAction, onUpdate: NoAction, map: "Bookings_ibfk_3")
+
+  @@index([maGhe], map: "maGhe")
+  @@index([maLichChieu], map: "maLichChieu")
+  @@index([taiKhoan], map: "taiKhoan")
+}
+
+model Chairs {
+  maGhe     Int        @id
+  tenGhe    String?    @db.VarChar(100)
+  loaiGhe   String?    @db.VarChar(100)
+  maRap     Int?
+  deletedBy Int        @default(0)
+  isDeleted Boolean    @default(false)
+  deletedAt DateTime?  @db.Timestamp(0)
+  createdAt DateTime   @default(now()) @db.Timestamp(0)
+  updatedAt DateTime   @default(now()) @db.Timestamp(0)
+  Bookings  Bookings[]
+  Cinema    Cinema?    @relation(fields: [maRap], references: [maRap], onDelete: NoAction, onUpdate: NoAction, map: "Chairs_ibfk_1")
+
+  @@index([maRap], map: "maRap")
+}
+
+model Cinema {
+  maRap         Int            @id
+  tenRap        String?        @db.VarChar(100)
+  maCumRap      Int?
+  deletedBy     Int            @default(0)
+  isDeleted     Boolean        @default(false)
+  deletedAt     DateTime?      @db.Timestamp(0)
+  createdAt     DateTime       @default(now()) @db.Timestamp(0)
+  updatedAt     DateTime       @default(now()) @db.Timestamp(0)
+  Chairs        Chairs[]
+  CinemaCluster CinemaCluster? @relation(fields: [maCumRap], references: [maCumRap], onDelete: NoAction, onUpdate: NoAction, map: "Cinema_ibfk_1")
+  Showtimes     Showtimes[]
+
+  @@index([maCumRap], map: "maCumRap")
+}
+
+model CinemaCluster {
+  maCumRap     Int           @id
+  maHeThongRap Int?
+  tenCumRap    String?       @db.VarChar(100)
+  diaChi       String?       @db.VarChar(200)
+  deletedBy    Int           @default(0)
+  isDeleted    Boolean       @default(false)
+  deletedAt    DateTime?     @db.Timestamp(0)
+  createdAt    DateTime      @default(now()) @db.Timestamp(0)
+  updatedAt    DateTime      @default(now()) @db.Timestamp(0)
+  Cinema       Cinema[]
+  CinemaSystem CinemaSystem? @relation(fields: [maHeThongRap], references: [maHeThongRap], onDelete: NoAction, onUpdate: NoAction, map: "CinemaCluster_ibfk_1")
+
+  @@index([maHeThongRap], map: "maHeThongRap")
+}
+
+model CinemaSystem {
+  maHeThongRap  Int             @id
+  tenHeThongRap String?         @db.VarChar(100)
+  logo          String?         @db.VarChar(255)
+  deletedBy     Int             @default(0)
+  isDeleted     Boolean         @default(false)
+  deletedAt     DateTime?       @db.Timestamp(0)
+  createdAt     DateTime        @default(now()) @db.Timestamp(0)
+  updatedAt     DateTime        @default(now()) @db.Timestamp(0)
+  CinemaCluster CinemaCluster[]
+}
+
+model Movies {
+  maPhim        Int         @id
+  tenPhim       String?     @db.VarChar(100)
+  trailerPhim   String?     @db.VarChar(255)
+  hinhAnh       String?     @db.VarChar(255)
+  moTa          String?     @db.VarChar(255)
+  ngayKhoiChieu DateTime?   @db.Date
+  danhGia       Int?
+  hot           Boolean?
+  dangChieu     Boolean?
+  sapChieu      Boolean?
+  deletedBy     Int         @default(0)
+  isDeleted     Boolean     @default(false)
+  deletedAt     DateTime?   @db.Timestamp(0)
+  createdAt     DateTime    @default(now()) @db.Timestamp(0)
+  updatedAt     DateTime    @default(now()) @db.Timestamp(0)
+  Banners       Banners[]
+  Showtimes     Showtimes[]
+}
+
+model Showtimes {
+  maLichChieu  Int        @id
+  maPhim       Int?
+  maRap        Int?
+  ngayGioChieu DateTime?  @db.Date
+  giaVe        Int?
+  deletedBy    Int        @default(0)
+  isDeleted    Boolean    @default(false)
+  deletedAt    DateTime?  @db.Timestamp(0)
+  createdAt    DateTime   @default(now()) @db.Timestamp(0)
+  updatedAt    DateTime   @default(now()) @db.Timestamp(0)
+  Bookings     Bookings[]
+  Cinema       Cinema?    @relation(fields: [maRap], references: [maRap], onDelete: NoAction, onUpdate: NoAction, map: "Showtimes_ibfk_1")
+  Movies       Movies?    @relation(fields: [maPhim], references: [maPhim], onDelete: NoAction, onUpdate: NoAction, map: "Showtimes_ibfk_2")
+
+  @@index([maPhim], map: "maPhim")
+  @@index([maRap], map: "maRap")
+}
+
+model Users {
+  userId        Int        @id @default(autoincrement())
+  taiKhoan      String?    @unique(map: "taiKhoan") @db.VarChar(100)
+  hoTen         String?    @db.VarChar(100)
+  email         String     @unique(map: "email") @db.VarChar(100)
+  soDt          String?    @db.VarChar(100)
+  matKhau       String?    @db.VarChar(100)
+  loaiNguoiDung String?    @db.VarChar(100)
+  deletedBy     Int        @default(0)
+  isDeleted     Boolean    @default(false)
+  deletedAt     DateTime?  @db.Timestamp(0)
+  createdAt     DateTime   @default(now()) @db.Timestamp(0)
+  updatedAt     DateTime   @default(now()) @db.Timestamp(0)
+  Bookings      Bookings[]
+}
