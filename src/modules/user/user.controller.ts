@@ -5,7 +5,7 @@ import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { PaginationDto } from './Dto/pagination-user.dto';
 import { AdduserDto } from './Dto/adduser-user.dto';
 
-@Controller('User')
+@Controller('QuanLyNguoiDung')
 export class UserController {
     constructor (private readonly userService : UserService){}
 

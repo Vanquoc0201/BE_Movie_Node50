@@ -12,6 +12,6 @@ export class LoginDto {
    taiKhoan: string;
    @IsString({message: 'Mật khẩu phải là chuỗi'})
    @IsNotEmpty({ message: 'Mật khẩu không được để trống'})
-  @ApiProperty({ example: 'vanquoc020106' })
+  @ApiProperty({ example: 'vanquoc0201' })
    matKhau: string;
 }
