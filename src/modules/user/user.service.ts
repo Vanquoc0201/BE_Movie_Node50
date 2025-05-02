@@ -78,4 +78,76 @@ export class UserService {
             ...userWithoutPassword,
         }
     }
+    async deleteUser(taiKhoan: string){
+        const user = await this.prismaService.users.findUnique({
+            where: { taiKhoan },
+        });
+        if (!user) {
+            throw new BadRequestException('Tài khoản không tồn tại');
+        }
+        await this.prismaService.users.delete({
+            where: { taiKhoan },
+        });
+        return {
+            message: 'Xóa người dùng thành công',
+            ...user,
+        };
+    }
+    async updateUser(body : AdduserDto){
+        const { taiKhoan, matKhau, hoTen, email, soDt, loaiNguoiDung } = body;
+        const hashedPassword = await bcrypt.hash(matKhau, 10);
+        const existingUser = await this.prismaService.users.findUnique({
+            where: { taiKhoan },
+        });
+        if (!existingUser) {
+            throw new BadRequestException('Tài khoản không tồn tại');
+        }
+        const updatedUser = await this.prismaService.users.update({
+            where: { taiKhoan },
+            data: {
+                matKhau: hashedPassword,
+                hoTen,
+                email,
+                soDt,
+                loaiNguoiDung,
+            },
+        });
+        const { matKhau: _ , ...userWithoutPassword } = updatedUser;
+        return {
+            message: 'Cập nhật người dùng thành công',
+            ...userWithoutPassword,
+        };
+    }
+    async getUserInfo(taiKhoan: string) {
+        const user = await this.prismaService.users.findUnique({
+            where: { taiKhoan },
+        });
+        if (!user) {
+            throw new BadRequestException('Tài khoản không tồn tại');
+        }
+        return {
+            message: 'Lấy thông tin người dùng thành công',
+            ...user,
+        };
+    }
+    async getAllUserType() {
+        const userTypes = await this.prismaService.users.findMany({
+            where: {
+                loaiNguoiDung: {
+                    not: null, // Lọc ra loại người dùng không null
+                },
+            },
+            distinct: ['loaiNguoiDung'], // Loại bỏ các loại người dùng trùng lặp
+            select: {
+                loaiNguoiDung: true, // Chỉ lấy trường loaiNguoiDung ẩn các field khác
+            },
+        });
+        if (!userTypes.length) {
+            throw new BadRequestException('Không tìm thấy loại người dùng nào');
+        }
+        return userTypes.map((item) => item.loaiNguoiDung); 
+    }
+    
+
+    
 }

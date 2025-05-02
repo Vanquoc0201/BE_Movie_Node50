@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
@@ -8,6 +8,9 @@ import { AdduserDto } from './Dto/adduser-user.dto';
 @Controller('User')
 export class UserController {
     constructor (private readonly userService : UserService){}
+
+
+
     @Get('LayDanhSachNguoiDung')
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('AccessToken')
@@ -18,6 +21,9 @@ export class UserController {
             ...allUser,
         }
     }
+
+
+
     @Get('LayDanhSachNguoiDungPhanTrang')
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('AccessToken')
@@ -51,6 +57,9 @@ export class UserController {
         };
         return this.userService.getAllUserPagination(paginationDto);
     }
+
+
+
     @Get('TimKiemNguoiDung')
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('AccessToken')
@@ -65,6 +74,9 @@ export class UserController {
     ){
         return this.userService.searchUser(taiKhoan)
     }
+
+
+
     @Post('ThemNguoiDung')
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('AccessToken')
@@ -73,5 +85,61 @@ export class UserController {
         body : AdduserDto
     ){
         return this.userService.addUser(body)
+    }
+
+
+
+    @Delete('XoaNguoiDung')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('AccessToken')
+    @ApiQuery({
+        name: 'taiKhoan',
+        required: true,
+        description: 'Tài khoản cần xóa',
+        example: 'nguyenvana123',
+    })
+    async deleteUser(
+        @Query('taiKhoan') taiKhoan:string
+    ){
+        return this.userService.deleteUser(taiKhoan)
+    }
+
+
+
+    @Put('CapNhatThongTinNguoiDung')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('AccessToken')
+    async updateUser(
+        @Body() body: AdduserDto
+    ){
+        return this.userService.updateUser(body)
+    }
+
+
+    @Get('LayThongTinNguoiDung')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('AccessToken')
+    @ApiQuery({
+        name: 'taiKhoan',
+        required: true,
+        description: 'Tài khoản cần lấy thông tin',
+        example: 'nguyenvanb'
+    })
+    async getUserInfo(
+        @Query('taiKhoan') taiKhoan: string
+    ){
+        return this.userService.getUserInfo(taiKhoan)
+    }
+
+
+    @Get('LayDanhSachLoaiNguoiDung')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('AccessToken')
+    async getAllUserType(){
+        const allUserType = await this.userService.getAllUserType()
+        return {
+            message : 'Lấy danh sách loại người dùng thành công',
+            ...allUserType,
+        }
     }
 }

@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString, Matches, IsIn } from "class-validator";
 export class AdduserDto {
     @IsString({message : 'Tài khoản phải là chuỗi'})
     @IsNotEmpty({message : 'Tài khoản không được để trống'})
-    @ApiProperty({example: 'vovanquoc0201', description: 'Tài khoản người dùng'})
+    @ApiProperty({example: 'nguyenvanb', description: 'Tài khoản người dùng'})
     taiKhoan : string;
     @IsString({message : 'Mật khẩu phải là chuỗi'})
     @IsNotEmpty({message : 'Mật khẩu không được để trống'})
@@ -12,12 +12,12 @@ export class AdduserDto {
     matKhau : string;
     @IsString({message : 'Họ tên phải là chuỗi'})
     @IsNotEmpty({message : 'Họ tên không được để trống'})
-    @ApiProperty({example: 'Võ Văn Quốc', description: 'Họ tên người dùng'})
+    @ApiProperty({example: 'Nguyễn Văn B', description: 'Họ tên người dùng'})
 
     hoTen : string;
     @IsString({message : 'Email phải là chuỗi'})
     @IsNotEmpty({message : 'Email không được để trống'})
-    @ApiProperty({example: 'vovanquoc0201@gmail.com', description: 'Email người dùng'})
+    @ApiProperty({example: 'nguyenvanb123@gmail.com', description: 'Email người dùng'})
     @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, {
         message: 'Email không đúng định dạng',
     })
