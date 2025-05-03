@@ -1,6 +1,6 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { CinemaService } from './cinema.service';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 
 @Controller('QuanLyRap')
 export class CinemaController {
@@ -18,5 +18,12 @@ export class CinemaController {
 
     ){
         return await this.cinemaService.getCinemaCluster(maHeThongRap)
+    }
+    @Get('LayThongTinLichChieuTheoHeThongRap')
+    @ApiBearerAuth('AccessToken')
+    async getShowTimesByCinemaCluster(
+      @Query('maHeThongRap') maHeThongRap : number
+    ){
+      return await this.cinemaService.getShowTimesByCinemaCluster(maHeThongRap)
     }
 }
