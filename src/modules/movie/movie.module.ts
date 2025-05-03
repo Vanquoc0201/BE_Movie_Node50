@@ -4,11 +4,10 @@ import { MovieService } from './movie.service';
 import { PassportModule } from '@nestjs/passport';
 import { AuthModule } from '../auth/auth.module';
 import { PrismaService } from '../prisma/prisma.service';
-import { JwtStrategy } from '../auth/strategy/jwt.strategy';
 
 @Module({
   imports: [PassportModule, AuthModule],
   controllers: [MovieController],
-  providers: [MovieService,PrismaService,JwtStrategy]
+  providers: [MovieService,PrismaService]
 })
 export class MovieModule {}

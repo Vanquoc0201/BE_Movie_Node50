@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { PaginationDto } from './Dto/pagination-user.dto';
 import { AdduserDto } from './Dto/adduser-user.dto';
@@ -12,7 +11,6 @@ export class UserController {
 
 
     @Get('LayDanhSachNguoiDung')
-    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('AccessToken')
     async getAllUser(){
         const allUser = await this.userService.getAllUser()
@@ -25,7 +23,6 @@ export class UserController {
 
 
     @Get('LayDanhSachNguoiDungPhanTrang')
-    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('AccessToken')
     @ApiQuery({
         name: 'page',
@@ -61,7 +58,6 @@ export class UserController {
 
 
     @Get('TimKiemNguoiDung')
-    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('AccessToken')
     @ApiQuery({
         name: 'taiKhoan',
@@ -78,7 +74,6 @@ export class UserController {
 
 
     @Post('ThemNguoiDung')
-    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('AccessToken')
     async addUser(
         @Body()
@@ -90,7 +85,6 @@ export class UserController {
 
 
     @Delete('XoaNguoiDung')
-    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('AccessToken')
     @ApiQuery({
         name: 'taiKhoan',
@@ -107,7 +101,6 @@ export class UserController {
 
 
     @Put('CapNhatThongTinNguoiDung')
-    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('AccessToken')
     async updateUser(
         @Body() body: AdduserDto
@@ -117,7 +110,6 @@ export class UserController {
 
 
     @Get('LayThongTinNguoiDung')
-    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('AccessToken')
     @ApiQuery({
         name: 'taiKhoan',
@@ -133,7 +125,6 @@ export class UserController {
 
 
     @Get('LayDanhSachLoaiNguoiDung')
-    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('AccessToken')
     async getAllUserType(){
         const allUserType = await this.userService.getAllUserType()

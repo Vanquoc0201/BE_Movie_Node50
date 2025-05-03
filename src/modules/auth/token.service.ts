@@ -5,14 +5,13 @@ import { ACCESS_TOKEN_EXPIRES, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_EXPIRES, REFRE
 export class TokenService {
     constructor(private readonly jwtService : JwtService){}
     createToken(userId:number) {
-        const payload = { userId };
-        const accessToken = this.jwtService.sign(payload, {
+        const accessToken = this.jwtService.sign({ userId: userId },  {
             expiresIn: ACCESS_TOKEN_EXPIRES,
             secret : ACCESS_TOKEN_SECRET
-        })
-        const refreshToken = this.jwtService.sign(payload, {
-            expiresIn: REFRESH_TOKEN_EXPIRES,
-            secret : REFRESH_TOKEN_SECRET,
+           });
+       const refreshToken = this.jwtService.sign({ userId: userId },  {
+           expiresIn:REFRESH_TOKEN_EXPIRES,
+           secret: REFRESH_TOKEN_SECRET
         })
         return { accessToken, refreshToken };
     }

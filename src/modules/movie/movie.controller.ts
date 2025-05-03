@@ -1,6 +1,5 @@
 import { BadRequestException, Body, Controller, MaxFileSizeValidator, ParseFilePipe, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { MovieService } from './movie.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AddMovieDto } from './Dto/addmovie-movie.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -10,7 +9,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class MovieController {
     constructor(private readonly movieService : MovieService) {}
     @Post('ThemPhim')
-    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('AccessToken')
     @UseInterceptors(FileInterceptor('hinhAnh'))
     @ApiConsumes('multipart/form-data')

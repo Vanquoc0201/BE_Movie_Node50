@@ -6,7 +6,6 @@ import { TokenService } from './token.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ACCESS_TOKEN_SECRET , ACCESS_TOKEN_EXPIRES } from 'src/common/constant/app.constant';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './strategy/jwt.strategy';
 @Module({
   imports: [
     PassportModule,
@@ -16,7 +15,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
     })
   ],
   controllers: [AuthController],
-  providers: [AuthService,PrismaService,TokenService,JwtStrategy],
+  providers: [AuthService,PrismaService,TokenService],
   exports : [JwtModule]
 })
 export class AuthModule {}

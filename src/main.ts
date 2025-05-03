@@ -1,8 +1,11 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { PORT } from './common/constant/app.constant';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { ProtectGuard } from './modules/auth/protect/protect.guard';
+import { ResponseSuccessInterceptor } from './common/interceptor/response-success.interceptor';
+import { LoggingInterceptor } from './common/interceptor/logging.interceptor';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
@@ -11,6 +14,10 @@ async function bootstrap() {
       forbidNonWhitelisted: true, // Nếu trong dto không khai báo thì sẽ bắn lỗi => throw error
     }),
   ); // bật validation global
+  const reflector = app.get(Reflector)
+  app.useGlobalGuards( new ProtectGuard(reflector))
+  app.useGlobalInterceptors( new LoggingInterceptor())
+  app.useGlobalInterceptors( new ResponseSuccessInterceptor())
   const config = new DocumentBuilder()
     .setTitle('Cats example')
     .setDescription('The cats API description')

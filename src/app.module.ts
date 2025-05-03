@@ -5,10 +5,12 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { MovieModule } from './modules/movie/movie.module';
 import { CinemaModule } from './modules/cinema/cinema.module';
+import { ProtectStrategy } from './modules/auth/protect/protect.strategy';
+import { PrismaService } from './modules/prisma/prisma.service';
 
 @Module({
   imports: [AuthModule, UserModule, MovieModule, CinemaModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,ProtectStrategy,PrismaService],
 })
 export class AppModule {}
