@@ -26,4 +26,11 @@ export class CinemaController {
     ){
       return await this.cinemaService.getShowTimesByCinemaCluster(maHeThongRap)
     }
+    @Get('LayThongTinLichChieuTheoMaPhim')
+    @ApiBearerAuth('AccessToken')
+    async getShowTimesByMovies(
+      @Query('maPhim') maPhim: number
+    ){
+      return this.cinemaService.getShowTimesByMovies(maPhim)
+    }
 }

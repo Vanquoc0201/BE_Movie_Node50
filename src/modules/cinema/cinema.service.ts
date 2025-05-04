@@ -78,4 +78,47 @@ export class CinemaService {
             showtimes,                 // Danh sách lịch chiếu
         };
     }
+    async getShowTimesByMovies(maPhim : number){
+        const movie = await this.prismaService.movies.findUnique({
+            where : { maPhim : +maPhim}
+        })
+        if(!movie){
+            throw new BadRequestException('Mã phim không tồn tại')
+        }
+        const showtimes = await this.prismaService.showtimes.findMany({
+            where : {maPhim : +maPhim},
+            include : {
+                Cinema : {
+                    select: {
+                        maRap : true,
+                        tenRap : true,
+                        CinemaCluster : {
+                            select : {
+                                maCumRap: true,
+                                tenCumRap: true,
+                                CinemaSystem : {
+                                    select : {
+                                        maHeThongRap : true,
+                                        tenHeThongRap : true,
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        return {
+            maPhim,
+            tenPhim : movie.tenPhim,
+            soLuongLichChieu : showtimes.length,
+            lichChieu : showtimes.map(show => ({
+                maLichChieu : show.maLichChieu,
+                ngayGioChieu : show.ngayGioChieu,
+                rap : show.Cinema?.tenRap,
+                cumRap : show.Cinema?.CinemaCluster?.tenCumRap,
+                heThongRap : show.Cinema?.CinemaCluster?.CinemaSystem?.tenHeThongRap,
+            }))
+        }
+    }
 }
