@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { BookingTicketDto } from './Dto/bookingticket.dto';
+import { CreateShowtimeDto } from './Dto/createshowtime.dto';
 
 @Injectable()
 export class BookingService {
@@ -83,5 +84,30 @@ export class BookingService {
             booking,
         };
 
+    }
+    async createShowTime(body : CreateShowtimeDto){
+        const { maPhim, maRap, ngayGioChieu, giaVe } = body;
+        const phim = await this.prismaService.movies.findUnique({ where: { maPhim } });
+        if (!phim) {
+            throw new BadRequestException('Mã phim không tồn tại');
+        }
+        const rap = await this.prismaService.cinema.findUnique({ where: { maRap } });
+        if (!rap) {
+            throw new BadRequestException('Mã rạp không tồn tại');
+        }
+        const maLichChieu = +(`${body.maPhim}${body.maRap}`);
+        const newShowtime = await this.prismaService.showtimes.create({
+            data : {
+                maLichChieu: maLichChieu,
+                maPhim : body.maPhim,
+                maRap : body.maRap,
+                ngayGioChieu : new Date(body.ngayGioChieu),
+                giaVe : body.giaVe
+            }
+        });
+        return {
+            message: 'Tạo lịch chiếu thành công',
+            data: newShowtime,
+        };
     }
 }
