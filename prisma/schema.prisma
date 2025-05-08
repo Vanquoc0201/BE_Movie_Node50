@@ -22,18 +22,19 @@ model Banners {
 }
 
 model Bookings {
-  bookingId   Int        @id @default(autoincrement())
-  taiKhoan    String?    @db.VarChar(100)
-  maLichChieu Int?
-  maGhe       Int?
-  deletedBy   Int        @default(0)
-  isDeleted   Boolean    @default(false)
-  deletedAt   DateTime?  @db.Timestamp(0)
-  createdAt   DateTime   @default(now()) @db.Timestamp(0)
-  updatedAt   DateTime   @default(now()) @db.Timestamp(0)
-  Users       Users?     @relation(fields: [taiKhoan], references: [taiKhoan], onDelete: NoAction, onUpdate: NoAction, map: "Bookings_ibfk_1")
-  Showtimes   Showtimes? @relation(fields: [maLichChieu], references: [maLichChieu], onDelete: NoAction, onUpdate: NoAction, map: "Bookings_ibfk_2")
-  Chairs      Chairs?    @relation(fields: [maGhe], references: [maGhe], onDelete: NoAction, onUpdate: NoAction, map: "Bookings_ibfk_3")
+  bookingId      Int              @id @default(autoincrement())
+  taiKhoan       String?          @db.VarChar(100)
+  maLichChieu    Int?
+  maGhe          Int?
+  deletedBy      Int              @default(0)
+  isDeleted      Boolean          @default(false)
+  deletedAt      DateTime?        @db.Timestamp(0)
+  createdAt      DateTime         @default(now()) @db.Timestamp(0)
+  updatedAt      DateTime         @default(now()) @db.Timestamp(0)
+  BookingDetails BookingDetails[]
+  Users          Users?           @relation(fields: [taiKhoan], references: [taiKhoan], onDelete: NoAction, onUpdate: NoAction, map: "Bookings_ibfk_1")
+  Showtimes      Showtimes?       @relation(fields: [maLichChieu], references: [maLichChieu], onDelete: NoAction, onUpdate: NoAction, map: "Bookings_ibfk_2")
+  Chairs         Chairs?          @relation(fields: [maGhe], references: [maGhe], onDelete: NoAction, onUpdate: NoAction, map: "Bookings_ibfk_3")
 
   @@index([maGhe], map: "maGhe")
   @@index([maLichChieu], map: "maLichChieu")
@@ -41,17 +42,18 @@ model Bookings {
 }
 
 model Chairs {
-  maGhe     Int        @id
-  tenGhe    String?    @db.VarChar(100)
-  loaiGhe   String?    @db.VarChar(100)
-  maRap     Int?
-  deletedBy Int        @default(0)
-  isDeleted Boolean    @default(false)
-  deletedAt DateTime?  @db.Timestamp(0)
-  createdAt DateTime   @default(now()) @db.Timestamp(0)
-  updatedAt DateTime   @default(now()) @db.Timestamp(0)
-  Bookings  Bookings[]
-  Cinema    Cinema?    @relation(fields: [maRap], references: [maRap], onDelete: NoAction, onUpdate: NoAction, map: "Chairs_ibfk_1")
+  maGhe          Int              @id
+  tenGhe         String?          @db.VarChar(100)
+  loaiGhe        String?          @db.VarChar(100)
+  maRap          Int?
+  deletedBy      Int              @default(0)
+  isDeleted      Boolean          @default(false)
+  deletedAt      DateTime?        @db.Timestamp(0)
+  createdAt      DateTime         @default(now()) @db.Timestamp(0)
+  updatedAt      DateTime         @default(now()) @db.Timestamp(0)
+  BookingDetails BookingDetails[]
+  Bookings       Bookings[]
+  Cinema         Cinema?          @relation(fields: [maRap], references: [maRap], onDelete: NoAction, onUpdate: NoAction, map: "Chairs_ibfk_1")
 
   @@index([maRap], map: "maRap")
 }
@@ -101,39 +103,42 @@ model CinemaSystem {
 }
 
 model Movies {
-  maPhim        Int         @id
-  tenPhim       String?     @db.VarChar(100)
-  trailerPhim   String?     @db.VarChar(255)
-  hinhAnh       String?     @db.VarChar(255)
-  moTa          String?     @db.VarChar(255)
-  ngayKhoiChieu DateTime?   @db.Date
+  maPhim        Int               @id
+  tenPhim       String?           @db.VarChar(100)
+  trailerPhim   String?           @db.VarChar(255)
+  hinhAnh       String?           @db.VarChar(255)
+  moTa          String?           @db.VarChar(255)
+  ngayKhoiChieu DateTime?         @db.Date
   danhGia       Int?
-  hot           Boolean?
-  dangChieu     Boolean?
-  sapChieu      Boolean?
-  deletedBy     Int         @default(0)
-  isDeleted     Boolean     @default(false)
-  deletedAt     DateTime?   @db.Timestamp(0)
-  createdAt     DateTime    @default(now()) @db.Timestamp(0)
-  updatedAt     DateTime    @default(now()) @db.Timestamp(0)
+  deletedBy     Int               @default(0)
+  isDeleted     Boolean           @default(false)
+  deletedAt     DateTime?         @db.Timestamp(0)
+  createdAt     DateTime          @default(now()) @db.Timestamp(0)
+  updatedAt     DateTime          @default(now()) @db.Timestamp(0)
+  trangThai     Movies_trangThai? @default(DangChieu)
+  thoiLuong     Int?
+  quocGia       String?           @db.VarChar(100)
+  dienVien      String?           @db.VarChar(255)
+  theLoai       String?           @db.VarChar(100)
   Banners       Banners[]
   Showtimes     Showtimes[]
 }
 
 model Showtimes {
-  maLichChieu  Int        @id
+  maLichChieu  Int                  @id
   maPhim       Int?
   maRap        Int?
-  ngayGioChieu DateTime?  @db.Date
+  ngayGioChieu DateTime?            @db.Date
   giaVe        Int?
-  deletedBy    Int        @default(0)
-  isDeleted    Boolean    @default(false)
-  deletedAt    DateTime?  @db.Timestamp(0)
-  createdAt    DateTime   @default(now()) @db.Timestamp(0)
-  updatedAt    DateTime   @default(now()) @db.Timestamp(0)
+  deletedBy    Int                  @default(0)
+  isDeleted    Boolean              @default(false)
+  deletedAt    DateTime?            @db.Timestamp(0)
+  createdAt    DateTime             @default(now()) @db.Timestamp(0)
+  updatedAt    DateTime             @default(now()) @db.Timestamp(0)
+  trangThai    Showtimes_trangThai? @default(DangChieu)
   Bookings     Bookings[]
-  Cinema       Cinema?    @relation(fields: [maRap], references: [maRap], onDelete: NoAction, onUpdate: NoAction, map: "Showtimes_ibfk_1")
-  Movies       Movies?    @relation(fields: [maPhim], references: [maPhim], onDelete: NoAction, onUpdate: NoAction, map: "Showtimes_ibfk_2")
+  Cinema       Cinema?              @relation(fields: [maRap], references: [maRap], onDelete: NoAction, onUpdate: NoAction, map: "Showtimes_ibfk_1")
+  Movies       Movies?              @relation(fields: [maPhim], references: [maPhim], onDelete: NoAction, onUpdate: NoAction, map: "Showtimes_ibfk_2")
 
   @@index([maPhim], map: "maPhim")
   @@index([maRap], map: "maRap")
@@ -153,4 +158,38 @@ model Users {
   createdAt     DateTime   @default(now()) @db.Timestamp(0)
   updatedAt     DateTime   @default(now()) @db.Timestamp(0)
   Bookings      Bookings[]
+}
+
+model BookingDetails {
+  maBookingDetail Int                          @id @default(autoincrement())
+  maBooking       Int
+  maGhe           Int
+  trangThaiGhe    BookingDetails_trangThaiGhe? @default(DangDat)
+  deletedBy       Int                          @default(0)
+  isDeleted       Boolean                      @default(false)
+  deletedAt       DateTime?                    @db.Timestamp(0)
+  createdAt       DateTime                     @default(now()) @db.Timestamp(0)
+  updatedAt       DateTime                     @default(now()) @db.Timestamp(0)
+  Bookings        Bookings                     @relation(fields: [maBooking], references: [bookingId], onDelete: Cascade, onUpdate: NoAction, map: "BookingDetails_ibfk_1")
+  Chairs          Chairs                       @relation(fields: [maGhe], references: [maGhe], onDelete: Cascade, onUpdate: NoAction, map: "BookingDetails_ibfk_2")
+
+  @@unique([maBooking, maGhe], map: "maBooking")
+  @@index([maGhe], map: "maGhe")
+}
+
+enum BookingDetails_trangThaiGhe {
+  DangDat
+  DaDat
+}
+
+enum Showtimes_trangThai {
+  DangChieu
+  HetSuat
+  NgungChieu
+}
+
+enum Movies_trangThai {
+  DangChieu
+  SapChieu
+  NgungChieu
 }
