@@ -44,6 +44,33 @@ CREATE TABLE `Movies` (
 	`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`updatedAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
+-- BƯỚC 1: Thêm cột trangThai vào bảng Movies
+ALTER TABLE Movies
+ADD COLUMN trangThai ENUM('DangChieu', 'SapChieu', 'NgungChieu') DEFAULT 'DangChieu';
+
+-- BƯỚC 2: Cập nhật dữ liệu trangThai từ cột dangChieu và sapChieu
+UPDATE Movies
+SET trangThai = 
+  CASE 
+    WHEN dangChieu = 1 THEN 'DangChieu'
+    WHEN sapChieu = 1 THEN 'SapChieu'
+    ELSE 'NgungChieu'
+  END;
+
+-- BƯỚC 3: Xóa các cột cũ: dangChieu, sapChieu, hot
+ALTER TABLE Movies
+ADD COLUMN theLoai VARCHAR(100);
+
+DROP COLUMN dangChieu,
+DROP COLUMN sapChieu,
+DROP COLUMN hot;
+
+-- BƯỚC 4: Thêm các cột mới: thoiLuong, quocGia, dienVien
+ALTER TABLE Movies
+ADD COLUMN thoiLuong INT,
+ADD COLUMN quocGia VARCHAR(100),
+ADD COLUMN dienVien VARCHAR(255);
+
 CREATE TABLE `Banners` (
 	`maBanner` INT PRIMARY KEY NOT NULL, -- mặc định luôn luôn có
 	`maPhim` INT,
@@ -125,6 +152,9 @@ CREATE TABLE `Showtimes` (
 	`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`updatedAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
+-- BƯỚC 5: Thêm cột trangThai vào bảng Showtimes
+ALTER TABLE Showtimes
+ADD COLUMN trangThai ENUM('DangChieu', 'HetSuat', 'NgungChieu') DEFAULT 'DangChieu';
 CREATE TABLE `Bookings` (
 	`bookingId` INT PRIMARY KEY AUTO_INCREMENT,
 	`taiKhoan` VARCHAR(100), -- mặc định luôn luôn có
@@ -141,3 +171,22 @@ CREATE TABLE `Bookings` (
 	`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`updatedAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
+CREATE TABLE `BookingDetails` (
+    `maBookingDetail` INT AUTO_INCREMENT PRIMARY KEY,                          -- ID chi tiết đặt vé
+    `maBooking` INT NOT NULL,                                                  -- FK đến Bookings
+    `maGhe` INT NOT NULL,                                                      -- FK đến Chairs
+    `trangThaiGhe` ENUM('DangDat', 'DaDat') DEFAULT 'DangDat',                 -- Trạng thái ghế
+    -- mặc định luôn luôn có
+	`deletedBy` INT NOT NULL DEFAULT 0,
+	`isDeleted` TINYINT(1) NOT NULL DEFAULT 0,
+	`deletedAt` TIMESTAMP  NULL DEFAULT NULL,
+	`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`updatedAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (`maBooking`) REFERENCES `Bookings`(`bookingId`) ON DELETE CASCADE,
+    FOREIGN KEY (`maGhe`) REFERENCES `Chairs`(`maGhe`) ON DELETE CASCADE,
+
+    -- Không cho một ghế được đặt nhiều lần trong cùng một booking
+    UNIQUE (`maBooking`, `maGhe`)
+);
+

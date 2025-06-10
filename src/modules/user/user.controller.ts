@@ -13,11 +13,7 @@ export class UserController {
     @Get('LayDanhSachNguoiDung')
     @ApiBearerAuth('AccessToken')
     async getAllUser(){
-        const allUser = await this.userService.getAllUser()
-        return {
-            message : 'Lấy danh sách người dùng thành công',
-            ...allUser,
-        }
+        return await this.userService.getAllUser();
     }
 
 

@@ -7,7 +7,12 @@ import * as bcrypt from 'bcrypt';
 export class UserService {
     constructor(private readonly prismaService : PrismaService) {}
     async getAllUser(){
-        return await this.prismaService.users.findMany();
+        const users = await this.prismaService.users.findMany();
+        return {
+            status: 'success',
+            message: 'Lấy danh sách người dùng thành công',
+            data: users,
+        };
     }
     async getAllUserPagination(paginationDto: PaginationDto) {
         let { page, pageSize , search } = paginationDto;
@@ -45,7 +50,11 @@ export class UserService {
         if (!user.length) {
             throw new BadRequestException('Không tìm thấy người dùng nào');
         }
-        return user;
+        return {
+            status: 'success',
+            message: `Lấy danh sách người dùng với tài khoản ${taiKhoan} thành công`,
+            data: user,
+        };
     }
     async addUser(body : AdduserDto){
         const { taiKhoan, matKhau, hoTen, email, soDt, loaiNguoiDung } = body;
