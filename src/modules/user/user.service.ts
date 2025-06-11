@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { PaginationDto } from './Dto/pagination-user.dto';
 import { AdduserDto } from './Dto/adduser-user.dto';
 import * as bcrypt from 'bcrypt';
+import { UpdateUserDto } from './Dto/update-user.dto';
 @Injectable()
 export class UserService {
     constructor(private readonly prismaService : PrismaService) {}
@@ -102,31 +103,30 @@ export class UserService {
             ...user,
         };
     }
-    async updateUser(body : AdduserDto){
-        const { taiKhoan, matKhau, hoTen, email, soDt, loaiNguoiDung } = body;
-        const hashedPassword = await bcrypt.hash(matKhau, 10);
+    async updateUser(body: UpdateUserDto) {
+        const { taiKhoan, hoTen, email, soDt, loaiNguoiDung } = body;
         const existingUser = await this.prismaService.users.findUnique({
             where: { taiKhoan },
         });
         if (!existingUser) {
             throw new BadRequestException('Tài khoản không tồn tại');
         }
+        const dataToUpdate: any = {
+            ...(hoTen && { hoTen }),
+            ...(email && { email }),
+            ...(soDt && { soDt }),
+            ...(loaiNguoiDung && { loaiNguoiDung }),
+        };
         const updatedUser = await this.prismaService.users.update({
             where: { taiKhoan },
-            data: {
-                matKhau: hashedPassword,
-                hoTen,
-                email,
-                soDt,
-                loaiNguoiDung,
-            },
+            data: dataToUpdate,
         });
-        const { matKhau: _ , ...userWithoutPassword } = updatedUser;
         return {
             message: 'Cập nhật người dùng thành công',
-            ...userWithoutPassword,
+            ...updatedUser,
         };
     }
+
     async getUserInfo(taiKhoan: string) {
         const user = await this.prismaService.users.findUnique({
             where: { taiKhoan },

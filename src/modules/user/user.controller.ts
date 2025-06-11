@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { PaginationDto } from './Dto/pagination-user.dto';
 import { AdduserDto } from './Dto/adduser-user.dto';
+import { UpdateUserDto } from './Dto/update-user.dto';
 
 @Controller('QuanLyNguoiDung')
 export class UserController {
@@ -99,7 +100,7 @@ export class UserController {
     @Put('CapNhatThongTinNguoiDung')
     @ApiBearerAuth('AccessToken')
     async updateUser(
-        @Body() body: AdduserDto
+        @Body() body: UpdateUserDto
     ){
         return this.userService.updateUser(body)
     }

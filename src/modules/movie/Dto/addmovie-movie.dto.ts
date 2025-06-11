@@ -60,6 +60,11 @@ import {
     @IsNotEmpty({ message: 'quocGia không được để trống' })
     @ApiProperty({ example: 'Hàn Quốc' })
     quocGia: string;
+
+    @IsString({ message: 'theLoai phải là chuỗi' })
+    @IsNotEmpty({ message: 'theLoai không được để trống' })
+    @ApiProperty({ example: 'Hoạt hình, Phiêu Lưu' })
+    theLoai: string;
   
     @IsNumber(undefined, { message: 'thoiLuong phải là số (phút)' })
     @Type(() => Number)
