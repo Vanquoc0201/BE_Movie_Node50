@@ -2,7 +2,6 @@ import {
     IsString,
     IsNotEmpty,
     IsNumber,
-    IsIn,
     IsDate,
     IsEnum
   } from 'class-validator';

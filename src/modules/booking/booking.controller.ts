@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { BookingTicketDto } from './Dto/bookingticket.dto';
 import { CreateShowtimeDto } from './Dto/createshowtime.dto';
 
-@Controller('Booking')
+@Controller('QuanLyDatVe')
 export class BookingController {
     constructor (private readonly bookingService : BookingService ){}
     @Get('LayDanhSachPhongVe')

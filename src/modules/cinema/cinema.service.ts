@@ -1,5 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { addCinemaSystemDto } from './Dto/add-cinemasystem.dto';
+import { API_KEY_CLOUDINARY, API_SECRET_CLOUDINARY, CLOUD_NAME_CLOUDINARY } from 'src/common/constant/app.constant';
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 
 @Injectable()
 export class CinemaService {
@@ -9,6 +12,35 @@ export class CinemaService {
         return {
             message: 'Lấy thông tin hệ thống rạp thành công',
             data: cinemaSystem,
+        }
+    }
+    async addCinemaSystem(cinemaData : addCinemaSystemDto, file: Express.Multer.File){
+        cloudinary.config({
+                    cloud_name: CLOUD_NAME_CLOUDINARY,
+                    api_key: API_KEY_CLOUDINARY,
+                    api_secret: API_SECRET_CLOUDINARY,
+                });
+                const uploadResult: UploadApiResponse = await new Promise((resolve, reject) => {
+                    const stream = cloudinary.uploader.upload_stream(
+                        { folder: 'images' },
+                        (error, result) => {
+                            if (error) return reject(error);
+                            resolve(result as UploadApiResponse);
+                        }
+                    );
+                    stream.end(file.buffer);
+        });
+        const cinemaSystemToSave = {
+            ...cinemaData,
+            maHeThongRap : +cinemaData.maHeThongRap,
+             logo : uploadResult.secure_url,
+        }
+        const cinemaSystem = await this.prismaService.cinemaSystem.create({
+            data : cinemaSystemToSave
+        })
+        return {
+            message: 'Thêm hệ thống rạp thành công',
+            ...cinemaSystem,
         }
     }
     async getCinemaCluster(maHeThongRap : number){
