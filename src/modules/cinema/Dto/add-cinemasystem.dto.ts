@@ -9,7 +9,6 @@ export class addCinemaSystemDto {
 
     @IsString({ message: 'tenHeThongRap phải là chuỗi' })
     @IsNotEmpty({ message: 'tenHeThongRap không được để trống' })
-    @ApiProperty({ example: 'CGV' })
+    @ApiProperty({ example: 'Beta' })
     tenHeThongRap: string;
-
 }

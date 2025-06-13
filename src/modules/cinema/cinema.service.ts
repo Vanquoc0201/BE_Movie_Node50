@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { addCinemaSystemDto } from './Dto/add-cinemasystem.dto';
 import { API_KEY_CLOUDINARY, API_SECRET_CLOUDINARY, CLOUD_NAME_CLOUDINARY } from 'src/common/constant/app.constant';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
+import { addCinemaClusterDto } from './Dto/add-cinemacluster.dto';
 
 @Injectable()
 export class CinemaService {
@@ -60,6 +61,44 @@ export class CinemaService {
         return {
             message: 'Lấy thông tin cụm rạp thành công',
             data: cinemaClusterList,
+        };
+    }
+    async addCinemaCluster(body : addCinemaClusterDto){
+        const {maHeThongRap} = body;
+        const existingCluster = await this.prismaService.cinemaSystem.findUnique({
+            where : {maHeThongRap : +maHeThongRap}
+        });
+        if(!existingCluster) throw new BadRequestException('Mã hệ thống rạp không tồn tại');
+        const duplicate = await this.prismaService.cinemaCluster.findFirst({
+            where: {
+                tenCumRap: body.tenCumRap,
+                maHeThongRap: +maHeThongRap
+            }
+        });
+        if (duplicate) throw new BadRequestException('Tên cụm rạp đã tồn tại trong hệ thống này');
+        const newCluster = await this.prismaService.cinemaCluster.create({
+            data: {
+            ...body,
+            maHeThongRap: +maHeThongRap,
+            maCumRap : +body.maCumRap
+            },
+        });
+        return {
+            message: 'Thêm cụm rạp trong hệ thống rạp thành công',
+            ...newCluster,
+        }
+    }
+    async deleteCinemaCluster(maCumRap : number){
+        const cluster = await this.prismaService.cinemaCluster.findUnique({
+            where : {maCumRap : +maCumRap}
+        })
+        if(!cluster) throw new BadRequestException('Cụm rạp này không tồn tại trong hệ thống')
+        await this.prismaService.cinemaCluster.delete({
+            where : {maCumRap : +maCumRap}
+        })
+        return {
+            message: 'Xóa cụm rạp dùng thành công',
+            ...cluster,
         };
     }
     async getShowTimesByCinemaCluster(maHeThongRap:number){       

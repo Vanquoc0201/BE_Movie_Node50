@@ -1,8 +1,9 @@
-import { Body, Controller, Get, MaxFileSizeValidator, ParseFilePipe, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, MaxFileSizeValidator, ParseFilePipe, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CinemaService } from './cinema.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { addCinemaSystemDto } from './Dto/add-cinemasystem.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { addCinemaClusterDto } from './Dto/add-cinemacluster.dto';
 @ApiExtraModels(addCinemaSystemDto)
 @Controller('QuanLyRap')
 export class CinemaController {
@@ -10,20 +11,20 @@ export class CinemaController {
     @Get('LayThongTinHeThongRap')
     @ApiBearerAuth('AccessToken')
     async getCinemaSystem(){
-        return await this.cinemaService.getCinemaSystem()
+      return await this.cinemaService.getCinemaSystem()
     }
     @Post('ThemHeThongRap')
     @ApiBearerAuth('AccessToken')
     @UseInterceptors(FileInterceptor('logo'))
     @ApiConsumes('multipart/form-data')
-        @ApiBody({
+    @ApiBody({
             schema: {
               allOf: [
                 { $ref: getSchemaPath(addCinemaSystemDto) },
                 {
                   type: 'object',
                   properties: {
-                    hinhAnh: {
+                    logo: {
                       type: 'string',
                       format: 'binary',
                     },
@@ -31,15 +32,15 @@ export class CinemaController {
                 },
               ],
             },
-        })
-      async addCinemaSystem(
-            @Body()
-            body : addCinemaSystemDto,
-            @UploadedFile(new ParseFilePipe({
-                validators : [
-                    new MaxFileSizeValidator({maxSize : 1000000})
-                ]
-            }))
+    })
+    async addCinemaSystem(
+       @Body()
+       body : addCinemaSystemDto,
+        @UploadedFile(new ParseFilePipe({
+          validators : [
+            new MaxFileSizeValidator({maxSize : 1000000})
+          ]
+        }))
            file : Express.Multer.File
         ){
             const cinemaData = {
@@ -47,7 +48,7 @@ export class CinemaController {
                 logo : file.filename
             }
             return this.cinemaService.addCinemaSystem(cinemaData,file);
-      }
+    }
     @Get('LayThongTinCumRapTheoHeThong')
     @ApiBearerAuth('AccessToken')
     async getCinemaCluster(
@@ -56,6 +57,20 @@ export class CinemaController {
 
     ){
         return await this.cinemaService.getCinemaCluster(maHeThongRap)
+    }
+    @Post('ThemCumRapTheoHeThong')
+    @ApiBearerAuth('AccessToken')
+    async addCinemaCluster(
+      @Body() body : addCinemaClusterDto
+    ){
+      return await this.cinemaService.addCinemaCluster(body)
+    }
+    @Delete('XoaCumRapTheoHeThong')
+    @ApiBearerAuth('AccessToken')
+    async deleteCinemaCluster(
+      @Query('maCumRap') maCumRap : number 
+    ){
+      return await this.cinemaService.deleteCinemaCluster(maCumRap)
     }
     @Get('LayThongTinLichChieuTheoHeThongRap')
     @ApiBearerAuth('AccessToken')
