@@ -14,6 +14,11 @@ export class BookingController {
     ){
         return await this.bookingService.getListShowTimes(maLichChieu)
     }
+    @Get('LayDanhSachRapTheoCumRap')
+    @ApiBearerAuth('AccessToken')
+    async getListCinemaByCluster() {
+        return await this.bookingService.getListCinemaGroupedByCluster();
+    }
     @Post('DatVe')
     @ApiBearerAuth('AccessToken')
     @ApiBody({ type: BookingTicketDto })

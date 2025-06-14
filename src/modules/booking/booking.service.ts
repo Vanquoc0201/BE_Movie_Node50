@@ -49,6 +49,18 @@ export class BookingService {
             danhSachGhe : resultGhe
         }
     }
+    async getListCinemaGroupedByCluster() {
+      return await this.prismaService.cinemaCluster.findMany({
+        include: {
+          Cinema: {
+            select: {
+              maRap: true,
+              tenRap: true,
+            },
+          },
+        },
+      });
+    }
     async bookingTicket(body: BookingTicketDto, taiKhoan: string) {
         const { maLichChieu, danhSachGhe } = body;
       
@@ -114,8 +126,6 @@ export class BookingService {
           gheDaDat: danhSachGhe,
         };
     }
-      
-      
     async createShowTime(body : CreateShowtimeDto){
         const { maPhim, maRap, ngayGioChieu, giaVe } = body;
         const phim = await this.prismaService.movies.findUnique({ where: { maPhim } });
