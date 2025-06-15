@@ -3,6 +3,7 @@ import { BookingService } from './booking.service';
 import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { BookingTicketDto } from './Dto/bookingticket.dto';
 import { CreateShowtimeDto } from './Dto/createshowtime.dto';
+import { CreatePaymentDto } from './Dto/create-payment.dto';
 
 @Controller('QuanLyDatVe')
 export class BookingController {
@@ -36,6 +37,10 @@ export class BookingController {
     ){
         return await this.bookingService.createShowTime(body)
     }
-
+    @ApiBearerAuth('AccessToken')
+    @Post('TaoThanhToan')
+    async createPayment(@Body() body : CreatePaymentDto){
+        return await this.bookingService.createPayment(body);
+    }
 
 }
