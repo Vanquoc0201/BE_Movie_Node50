@@ -42,5 +42,4 @@ export class BookingController {
     async createPayment(@Body() body : CreatePaymentDto){
         return await this.bookingService.createPayment(body);
     }
-
 }

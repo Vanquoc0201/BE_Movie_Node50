@@ -38,12 +38,12 @@ export class CreatePaymentDto {
   description: string;
 
   @ApiProperty()
-  @IsUrl()
+  @IsString()
   returnUrl: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsOptional()
-  @IsUrl()
+  @IsString()
   cancelUrl?: string;
 
   @ApiProperty({ type: BuyerInfo })
